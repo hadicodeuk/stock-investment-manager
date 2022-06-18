@@ -9,7 +9,32 @@
 
 
 
+<h1> Upload your transactions </h1>
+
+<form method="POST" enctype="multipart/form-data" action="/">
+    <input type="file" id="input_csv" name="input_csv" accept=".csv">
+    <input type="submit" value="Upload file">
+</form>
 
 
+{% if failed_upload %}
+
+Upload failed, please upload a valid file
+{% endif %}
+
+{% if upload_binary %}
+<h1> Last 10 transactions from uploaded file </h1>
+
+{% for table in df_transactions %}
+            {{ table|safe }}
+{% endfor %}
+
+<h1> Share Summary </h1>
+
+{% for table in df_shares %}
+            {{ table|safe }}
+{% endfor %}
+
+ {% endif %}
 
 {% endblock %}
