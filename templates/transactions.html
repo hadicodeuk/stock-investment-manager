@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Index
+{% endblock %}
+
+
+{% block main %}
+
+
+{% for table in df_transactions %}
+            {{ table|safe }}
+{% endfor %}
+
+
+{% endblock %}
