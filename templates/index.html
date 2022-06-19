@@ -13,7 +13,7 @@
 
 <form method="POST" enctype="multipart/form-data" action="/">
     <input type="file" id="input_csv" name="input_csv" accept=".csv">
-    <input type="submit" value="Upload file">
+    <input type="submit" value="Process file">
 </form>
 
 
@@ -29,12 +29,21 @@ Upload failed, please upload a valid file
             {{ table|safe }}
 {% endfor %}
 
-<h1> Share Summary </h1>
+<h1> Share profit/loss table </h1>
 
 {% for table in df_shares %}
             {{ table|safe }}
 {% endfor %}
 
+<h1> Overall summary </h1>
+<p> Shares worth: £{{dict_data.shares_total_value}} </p>
+<p> Pounds change in shares: £{{dict_data.money_change_shares}} </p>
+<p> Percent change in shares: {{dict_data.pct_shares}}% </p>
+<p> Total value (investments + cash): £{{dict_data.total_value_plus_cash}} </p>
+<p> Total value of investments: £{{dict_data.shares_total_value}} </p>
+<p> Total in cash: £{{dict_data.net_cash_remaining}} </p>
+
  {% endif %}
+
 
 {% endblock %}

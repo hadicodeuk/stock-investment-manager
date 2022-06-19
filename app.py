@@ -31,7 +31,7 @@ def default():
 
             col_rename={'code_avg_buy_price':'Avg buy price',
                 'code_amount':'Number of shares',
-                'money_change_code':'Profit (£)',
+                'money_change_code':'Profit ($)',
                 'pct_code':'Percentage change (%)',
                 'code_in':'Cash invested',
                 'code_value':'Value of shares',
@@ -42,13 +42,14 @@ def default():
             'Avg buy price',
             'Latest Price',
             'Value of shares',
-            'Profit (£)',
+            'Profit ($)',
             'Percentage change (%)']
 
             df_shares=df_shares.rename(columns=col_rename)
             df_shares=df_shares[['Stock']+numerical_cols].copy()
 
             return render_template("index.html",
+                                    dict_data=dict_data,
                                     upload_binary=True,
                                     df_transactions=[df_transactions[['Date','Ticker','Action','Number','Price','Total']].tail(10).to_html(classes='data',header=True,index=False)],
                                     df_shares=[df_shares.to_html(classes='data',header=True,index=False)])

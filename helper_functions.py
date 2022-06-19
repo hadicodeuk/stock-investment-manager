@@ -7,9 +7,6 @@ import time
 from bs4 import BeautifulSoup
 import numpy as np
 
-list_shares_USD=['WBA','BABA','INTC','COIN','BLDP','OTLY','SLB','PTR','PYPL','BBLN']
-exchange_rate=1.23
-
 
 def convert_usd_gbp(value, exchange_rate):
     return value/exchange_rate
@@ -31,9 +28,6 @@ def return_date(date_str):
     return datetime.date(year,month,day)
 
 def transactions_process(df_transactions):
-    df_mapping_file=pd.read_csv('./input/stock_mapping_file.csv')
-    df_transactions=df_transactions.merge(df_mapping_file,on='Ticker', how='left')
-
     df_transactions['Price']=df_transactions['Total']/df_transactions['Number']
     df_transactions=df_transactions[df_transactions['Date'].notnull()]
     df_transactions['Date_dt']=df_transactions['Date'].apply(return_date)
@@ -42,7 +36,7 @@ def transactions_process(df_transactions):
     return df_transactions
 
 def get_share_summary(df_transactions):
-    
+
     net_cash_remaining=get_cash_remaining(df_transactions)
 
     shares=df_transactions[df_transactions['Type']=='Share']['Code'].unique().tolist()
@@ -51,11 +45,10 @@ def get_share_summary(df_transactions):
 
     for share in shares:
 
-        link=df_transactions[df_transactions['Code']==share]['Link'].min()
         ticker=df_transactions[df_transactions['Code']==share]['Ticker'].min()
-        ticker_latest_price=get_price_local(share,link,exchange_rate)
+        ticker_latest_price=return_price_yahoo(share)
         dict_stocks[ticker]=obtain_single_investment_dict(share,ticker,df_transactions,ticker_latest_price)
-        time.sleep(0.1)
+        time.sleep(0.05)
 
     shares_total_value=0
     shares_total_in=0
@@ -129,51 +122,6 @@ def get_cash_remaining(df_transactions):
     net_cash_remaining=cash_in+cash_in_sales-cash_buying-cash_out
 
     return net_cash_remaining
-
-def get_price_local(share,link,exchange_rate):
-
-    if share in list_shares_USD:
-        lse_response=return_price_yahoo(share)
-
-    else:
-        lse_response=get_price_lse(link)/100
-
-    if lse_response==-1:
-        api_response=price_ticker(share)
-
-        if api_response==-1:
-            return 'Cannot get the share prices'
-
-        else:
-            ticker_latest_price=api_response/100
-
-    else:
-        ticker_latest_price=lse_response
-
-    if share in list_shares_USD:
-        ticker_latest_price=convert_usd_gbp(lse_response,exchange_rate)
-
-    return ticker_latest_price
-
-def get_price_lse(link):
-
-    """
-    Function to scrape price of stock from website provided
-    """
-
-    f = urllib.request.urlopen(link)
-    website_text = f.read()
-    regex_search = re.search(r'class="price-tag"><!----><!---->(\d+.\d+)', str(website_text))
-
-    if regex_search is None:
-        return -1
-
-    else:
-        str_price=regex_search.group(1)
-
-        str_price_clean=str_price.replace(',','')
-        num_price_clean=float(str_price_clean)
-        return num_price_clean
 
 def return_price_yahoo(share):
     url = 'https://finance.yahoo.com/quote/'+ share + '/key-statistics?p=' + share
