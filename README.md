@@ -1,5 +1,5 @@
 # stock-investment-manager
-A Flask app to manage portfolio of stocks
+A Flask app to manage portfolio of stocks. The web app will process your share transactions log to produce a summary table of the profit/loss per share based on current share price.
 
 - Upload your transactions log. An example is provided in the sample directory
 
